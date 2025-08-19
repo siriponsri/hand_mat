@@ -2,16 +2,14 @@
 Flask==3.0.0
 Flask-CORS==4.0.0
 
-# Configuration and validation
-pydantic>=2.8.0
-pydantic-settings>=2.4.0
+# OpenAI Integration
+openai>=1.0.0
 
 # Image processing
 Pillow>=10.0.0
 
-# Machine Learning (for Teachable Machine models)
-# Uncomment the following line when ready to use Teachable Machine models:
-# tensorflow>=2.12.0,<3.0.0
+# Machine Learning
+tensorflow==2.13.0
 numpy>=1.24.0
 
 # System monitoring
@@ -19,8 +17,3 @@ psutil==5.9.6
 
 # Development dependencies
 python-dotenv==1.0.0
-
-# Optional ML dependencies (comment out if not needed)
-# tensorflow>=2.13.0
-# torch>=2.1.0
-# torchvision>=0.16.0

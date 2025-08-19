@@ -11,7 +11,7 @@ Your HandMat system is now fully integrated with:
 
 ### 1. Start the Backend Server
 ```powershell
-cd c:\Users\sriha\OneDrive\Desktop\My_Project\handmat\backend
+cd c:\Users\sriha\OneDrive\Desktop\My_Project\hand_mat\backend
 python app.py
 ```
 
