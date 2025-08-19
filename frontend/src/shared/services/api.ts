@@ -19,7 +19,7 @@ interface RecognitionResult {
   };
 }
 
-const API_CONFIG = {
+export const API_CONFIG = {
   baseUrl: 'http://localhost:5000',
   timeout: 10000,
 };
@@ -98,70 +98,83 @@ const createMockResponse = (useFaceContext: boolean = false): RecognitionRespons
 
 export async function recognizeSign(imageBlob: Blob): Promise<RecognitionResult> {
   try {
-    // Always allow capture - the image will be processed regardless
     console.log('Processing captured image...', imageBlob.size, 'bytes');
     
     // Try to call actual API endpoints
     let handResult: HandRecognitionResponse | null = null;
     let faceResult: FaceAnalysisResponse | null = null;
     
+    // Prepare FormData for both requests
+    const formData = new FormData();
+    formData.append('file', imageBlob, 'capture.jpg');
+    
     try {
-      // Attempt hand recognition API call
-      const formData = new FormData();
-      formData.append('file', imageBlob, 'capture.jpg');
-      
-      const handResponse = await fetch('http://localhost:5000/api/recognize', {
+      // Hand recognition API call
+      const handResponse = await fetch(`${API_CONFIG.baseUrl}/api/recognize`, {
         method: 'POST',
         body: formData,
       });
       
       if (handResponse.ok) {
         const data = await handResponse.json();
-        if (data.success) {
+        if (data.success && data.top1_word) {
           handResult = {
-            text: data.text || 'Unknown',
-            confidence: data.confidence || 0
+            text: data.top1_word,
+            confidence: data.top3_confidences?.[0] || 0.5
           };
+          console.log('Hand recognition success:', handResult);
         }
+      } else {
+        console.log('Hand API responded with error:', handResponse.status);
       }
     } catch (error) {
-      console.log('Hand model not available or error:', error);
-      // Don't throw error, just continue with Unknown
+      console.log('Hand recognition API unavailable:', error);
+      // Use fallback
+      handResult = {
+        text: 'Unknown',
+        confidence: 0
+      };
     }
     
     try {
-      // Attempt face analysis API call
-      const formData = new FormData();
-      formData.append('file', imageBlob, 'capture.jpg');
+      // Face analysis API call
+      const faceFormData = new FormData();
+      faceFormData.append('file', imageBlob, 'capture.jpg');
       
-      const faceResponse = await fetch('http://localhost:5000/api/face-analysis', {
+      const faceResponse = await fetch(`${API_CONFIG.baseUrl}/api/face-analysis`, {
         method: 'POST',
-        body: formData,
+        body: faceFormData,
       });
       
       if (faceResponse.ok) {
         const data = await faceResponse.json();
-        if (data.success) {
+        if (data.success && data.expression) {
           faceResult = {
-            emotion: data.emotion || 'neutral'
+            emotion: data.expression
           };
+          console.log('Face analysis success:', faceResult);
         }
+      } else {
+        console.log('Face API responded with error:', faceResponse.status);
       }
     } catch (error) {
-      console.log('Face model not available or error:', error);
-      // Don't throw error, just continue with Unknown
+      console.log('Face analysis API unavailable:', error);
+      // Use fallback
+      faceResult = {
+        emotion: 'neutral'
+      };
     }
     
-    // Process results - use actual results if available, otherwise Unknown
+    // Process results
     const text = handResult?.text || 'Unknown';
     const confidence = handResult?.confidence || 0;
     const emotion = faceResult?.emotion || 'neutral';
     
-    // Determine model status
+    // Determine model status based on actual API responses
     const modelStatus = {
-      hand: handResult ? 'ready' : 'unavailable',
-      face: faceResult ? 'ready' : 'unavailable',
-      overall: (handResult || faceResult) ? 'partial' : 'unavailable'
+      hand: handResult && handResult.text !== 'Unknown' ? 'ready' : 'unavailable',
+      face: faceResult && faceResult.emotion !== 'neutral' ? 'ready' : 'unavailable',
+      overall: (handResult?.text !== 'Unknown' || faceResult?.emotion !== 'neutral') ? 'partial' : 'unavailable'
     };
     
     console.log('Recognition completed:', { text, confidence, emotion, modelStatus });
@@ -176,9 +189,9 @@ export async function recognizeSign(imageBlob: Blob): Promise<RecognitionResult>
   } catch (error) {
     console.error('Recognition service error:', error);
     
-    // Even if there's an error, return Unknown result to allow capture
+    // Return fallback result
     return {
-      text: 'Unknown',
+      text: 'Error',
       confidence: 0,
       emotion: 'neutral',
       modelStatus: {
