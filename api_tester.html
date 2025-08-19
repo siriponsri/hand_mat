@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HandMat API Tester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .status { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 HandMat Backend API Tester</h1>
+        
+        <div class="test-section">
+            <h2>🔍 Health Check</h2>
+            <button onclick="testHealth()">Test Health API</button>
+            <div id="health-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎭 Face Detection</h2>
+            <button onclick="testFaceDetection()">Test Face API</button>
+            <div id="face-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>👋 Hand Recognition</h2>
+            <button onclick="testHandRecognition()">Test Hand API</button>
+            <div id="hand-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧠 LLM Composition</h2>
+            <button onclick="testLLMCompose()">Test LLM API</button>
+            <div id="llm-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔗 Full Integration Test</h2>
+            <button onclick="testFullIntegration()">Test Complete Flow</button>
+            <div id="integration-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1:5000';
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            try {
+                const response = await fetch(`${BASE_URL}/api/health`);
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <div class="status">✅ Success (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <div class="status">❌ Error</div>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFaceDetection() {
+            const resultDiv = document.getElementById('face-result');
+            const testImage = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//2Q=';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/face/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: testImage })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <div class="status">✅ Success (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <div class="status">❌ Error</div>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testHandRecognition() {
+            const resultDiv = document.getElementById('hand-result');
+            const testImage = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//2Q=';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/recognize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: testImage })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <div class="status">✅ Success (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <div class="status">❌ Error</div>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testLLMCompose() {
+            const resultDiv = document.getElementById('llm-result');
+            const testData = {
+                hand_result: { prediction: "hello", confidence: 0.95 },
+                face_result: { emotion: "happy", confidence: 0.88 }
+            };
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/compose`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <div class="status">✅ Success (${response.status})</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <div class="status">❌ Error</div>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testFullIntegration() {
+            const resultDiv = document.getElementById('integration-result');
+            resultDiv.innerHTML = '<p>🔄 Running full integration test...</p>';
+            
+            const testImage = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//2Q=';
+            const results = {};
+            
+            try {
+                // Test Face Detection
+                const faceResponse = await fetch(`${BASE_URL}/api/face/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: testImage })
+                });
+                results.face = await faceResponse.json();
+                
+                // Test Hand Recognition
+                const handResponse = await fetch(`${BASE_URL}/api/recognize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: testImage })
+                });
+                results.hand = await handResponse.json();
+                
+                // Test LLM Composition
+                const composeResponse = await fetch(`${BASE_URL}/api/compose`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hand_result: results.hand,
+                        face_result: results.face
+                    })
+                });
+                results.composition = await composeResponse.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <div class="status">🎉 Full Integration Success!</div>
+                        <h4>📊 Step by Step Results:</h4>
+                        <p><strong>1. Face Detection:</strong> ${results.face.emotion} (${(results.face.confidence * 100).toFixed(1)}%)</p>
+                        <p><strong>2. Hand Recognition:</strong> ${results.hand.prediction} (${(results.hand.confidence * 100).toFixed(1)}%)</p>
+                        <p><strong>3. Generated Sentence:</strong> "${results.composition.sentence}"</p>
+                        <details>
+                            <summary>📋 Full JSON Results</summary>
+                            <pre>${JSON.stringify(results, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <div class="status">❌ Integration Test Failed</div>
+                        <p>${error.message}</p>
+                        <pre>${JSON.stringify(results, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

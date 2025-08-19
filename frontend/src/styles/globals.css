@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Theme tokens */
+    --brand: #00a89d;
+    --brand-strong: #038599;
+    --text: #131516;
+    --bg: #f5f7f8;
+    --surface: #ffffff;
+    --accent: #f4ce14;
+    --overlay: rgba(0, 0, 0, 0.08);
+    
+    /* Original shadcn colors */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 183 100% 33%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent-hsl: 53 91% 51%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 183 100% 33%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Theme tokens */
+    --text: #e8eaed;
+    --bg: #0b0d0f;
+    --surface: #111315;
+    --overlay: rgba(255, 255, 255, 0.08);
+    
+    /* Original shadcn colors */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 183 100% 33%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent-hsl: 53 91% 51%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 183 100% 33%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-200;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Camera Interface */
+  .camera-container {
+    @apply relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-secondary;
+    box-shadow: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
+  }
+
+  .roi-guide {
+    @apply absolute border-2 border-dashed rounded-lg;
+    border-color: hsl(var(--roi-guide));
+    animation: pulse-roi 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .confidence-bar {
+    @apply relative h-2 rounded-full overflow-hidden bg-secondary;
+  }
+
+  .confidence-fill {
+    @apply h-full rounded-full transition-all duration-500 ease-out;
+  }
+
+  .confidence-fill[data-level="low"] {
+    @apply bg-gradient-to-r from-red-500 to-red-400;
+  }
+
+  .confidence-fill[data-level="medium"] {
+    @apply bg-gradient-to-r from-yellow-500 to-yellow-400;
+  }
+
+  .confidence-fill[data-level="high"] {
+    @apply bg-gradient-to-r from-green-500 to-green-400;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background: hsl(var(--gradient-glass));
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* Smooth animations */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes pulse-roi {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
